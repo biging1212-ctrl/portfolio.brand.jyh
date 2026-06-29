@@ -102,8 +102,8 @@ if (pageNum === 2) {
   continue;
 }
   
-// ── PAGE 30: YouTube Video ──
-if (pageNum === 30) {
+// ── PAGE 45: YouTube Video ──
+if (pageNum === 45) {
   slot.classList.add('youtube-page');
 
   const videoWrap = document.createElement('div');
