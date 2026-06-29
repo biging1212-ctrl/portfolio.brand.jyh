@@ -53,8 +53,8 @@
 })();
 
 // ── Config ──
-const TOTAL_PAGES = 77; // pages 2–78 (page 79 = closing HTML)
-const FINAL_PAGE_TOTAL = 79;
+const TOTAL_PAGES = 82; // pages 2–83 (page 84 = closing HTML)
+const FINAL_PAGE_TOTAL = 84;
 const STORAGE_KEY = 'portfolio_slots';
 
 // ── Load saved slots from localStorage ──
@@ -426,7 +426,7 @@ function addProjectIndex(slot) {
       title: 'WINKLE',
       desc: 'Branding / Product / Character',
       image: 'assets/images/project-03.png',
-      target: '#page-34',
+      target: '#page-31',
       imgX: 738,
       textX: 738
     },
@@ -435,7 +435,7 @@ function addProjectIndex(slot) {
       title: 'KIMCHI SAUCE',
       desc: 'Product / Retail',
       image: 'assets/images/project-04.png',
-      target: '#page-46',
+      target: '#page-49',
       imgX: 1007,
       textX: 1007
     },
@@ -453,7 +453,7 @@ function addProjectIndex(slot) {
       title: '삼쩜삼',
       desc: 'Pop-up store',
       image: 'assets/images/project-06.png',
-      target: '#page-68',
+      target: '#page-73',
       imgX: 1546,
       textX: 1545
     }
