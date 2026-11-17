@@ -1,0 +1,527 @@
+/* ==========================================================
+   JEON YOUNG HYEON — PORTFOLIO 2026
+   Figma reference: 1920 × 1080 (pages 01–03)
+   Desktop: pixel-based artboard, uniformly scaled to viewport.
+   Mobile: independent readable layout, not tiny scaled artboard.
+   ========================================================== */
+
+:root {
+  color-scheme: light;
+  --paper: #f9f9f9;
+  --ink: #030303;
+  --muted: #bfbfbf;
+  --panel-fill: #f2f2f2;
+  --font-latin: "Fustat", "Arial", sans-serif;
+  --font-ko: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --artboard-scale: 1;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-latin);
+  overflow-x: hidden;
+}
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+a { color: inherit; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #3c7857;
+  outline-offset: 3px;
+}
+
+/* Each section is one viewport tall, but scrolling is continuous. */
+.portfolio-page {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 540px;
+  background: var(--paper);
+  overflow: hidden;
+  isolation: isolate;
+}
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--artboard-scale));
+  transform-origin: center center;
+  background: var(--paper);
+}
+.section-label {
+  position: absolute;
+  top: 100px;
+  font: 500 16px/1.25 var(--font-latin);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.label-left { left: 100px; }
+.label-right { right: 100px; text-align: right; }
+
+/* ---------------------- PAGE 01 ------------------------- */
+.cover-name {
+  position: absolute;
+  top: 90.39px;
+  left: 100px;
+  width: 1720px;
+  font: 800 208.93px/1 var(--font-latin);
+  letter-spacing: -6.2679px;
+  white-space: nowrap;
+}
+.cover-services .service-item {
+  position: absolute;
+  top: 269px;
+  font: 500 16px/20px var(--font-latin);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.service-identity { left: 100px; }
+.service-communication { left: 644px; }
+.service-content { left: 1222px; }
+.cover-year {
+  position: absolute;
+  right: 100px;
+  bottom: 106px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font: 800 45px/1.2 var(--font-latin);
+  letter-spacing: -1.8px;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+.cover-year .cover-bracket {
+  font-weight: 500;
+  font-size: 60px;
+  letter-spacing: 0;
+}
+
+/* ---------------------- PAGE 02 ------------------------- */
+.introduce-headline {
+  position: absolute;
+  left: 99px;
+  top: 200px;
+  font: 400 61.33px/1.417 var(--font-ko);
+  letter-spacing: -2.453px;
+  white-space: nowrap;
+}
+.introduce-headline strong { font-weight: 650; }
+.introduce-headline .headline-light { font-weight: 300; }
+.introduce-statement {
+  position: absolute;
+  top: 300px;
+  left: 100px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.introduce-statement h3 {
+  font: 800 30px/1.3 var(--font-latin);
+  letter-spacing: -1.2px;
+  margin-bottom: 25px;
+}
+.introduce-statement p {
+  font: 600 28px/1.5 var(--font-ko);
+  letter-spacing: -1.12px;
+}
+
+.panel-stack {
+  position: absolute;
+  left: 101px;
+  top: 620px;
+  width: 1720px;
+  height: 369px;
+}
+.info-panel { position: absolute; width: 656px; }
+.panel-about { top: 0; left: 0; }
+.panel-education { top: 63px; left: 534px; }
+.panel-career { top: 126px; left: 1064px; }
+.panel-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 45px;
+  padding: 0 38px;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+  color: #fff;
+  font: 800 20px/1.4 var(--font-latin);
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+  z-index: 2;
+}
+.panel-content {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 484px;
+  padding: 26px 34px;
+  background: var(--panel-fill);
+  color: #333;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity .25s ease, transform .25s ease, visibility .25s;
+  z-index: 4;
+}
+.info-panel:hover,
+.info-panel:focus-within,
+.info-panel.is-open { z-index: 10; }
+.info-panel:hover .panel-content,
+.info-panel:focus-within .panel-content,
+.info-panel.is-open .panel-content {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.panel-about .panel-content { height: 102px; padding: 22px 38px; }
+.panel-education .panel-content { height: 201px; }
+.panel-career .panel-content { height: 198px; }
+.contact-list,
+.record-list { width: 100%; }
+.contact-list > div,
+.record-list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-ko);
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: -0.72px;
+  white-space: nowrap;
+}
+.contact-list > div + div,
+.record-list > div + div { margin-top: 11px; }
+.contact-list dt {
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.contact-list dd { font-weight: 400; }
+.contact-list dd a { text-decoration: none; }
+.contact-list dd a:hover { text-decoration: underline; }
+.record-list dt { font-weight: 400; }
+.record-list dd { font-weight: 300; }
+
+/* ---------------------- PAGE 03 ------------------------- */
+.page-three .stage { overflow: hidden; }
+.category-reel {
+  position: absolute;
+  left: 100px;
+  top: 434px;
+  width: 1250px;
+  height: 813px;
+  overflow: visible;
+  pointer-events: none;
+}
+.category-reel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+.reel-word {
+  position: absolute;
+  left: 0;
+  display: block;
+  font: 700 208.93px/1.1 var(--font-latin);
+  letter-spacing: -6.2679px;
+  white-space: nowrap;
+  text-transform: lowercase;
+}
+.reel-content-1 { top: 0; opacity: 1; }
+.reel-campaign { top: 226px; opacity: 0.05; }
+.reel-branding { top: 441px; opacity: 0.02; }
+.reel-content-2 { top: 667px; opacity: 0.01; }
+
+.category-preview {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.preview-image-stack {
+  position: absolute;
+  left: 1524px;
+  top: 407px;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(140deg, #e3f5ec, #e2eeeb);
+}
+.preview-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.preview-one { opacity: 1; }
+.asset-placeholder {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+}
+.preview-paren {
+  position: absolute;
+  top: 448px;
+  font: 700 100px/1.2 var(--font-latin);
+}
+.preview-paren-left { left: 1421px; }
+.preview-paren-right { left: 1777px; }
+
+/* Actual Figma motion (4-second infinitely looping timeline).
+   Start timings are preserved from the design's keyframe tracks. */
+.page-three.is-in-view .category-reel-track {
+  animation: reel-move 4s linear infinite;
+}
+.page-three.is-in-view .reel-content-1 { animation: reel-opacity-content-1 4s linear infinite; }
+.page-three.is-in-view .reel-campaign { animation: reel-opacity-campaign 4s linear infinite; }
+.page-three.is-in-view .reel-branding { animation: reel-opacity-branding 4s linear infinite; }
+.page-three.is-in-view .reel-content-2 { animation: reel-opacity-content-2 4s linear infinite; }
+.page-three.is-in-view .preview-one { animation: preview-opacity-1 4s linear infinite; }
+.page-three.is-in-view .preview-two { animation: preview-opacity-2 4s linear infinite; }
+.page-three.is-in-view .preview-three { animation: preview-opacity-3 4s linear infinite; }
+
+@keyframes reel-move {
+  0%, 8.75% { transform: translateY(0); }
+  18.75%, 27.5% { transform: translateY(-226px); }
+  37.5%, 46.25% { transform: translateY(-441px); }
+  56.25%, 100% { transform: translateY(-667px); }
+}
+@keyframes reel-opacity-content-1 {
+  0%, 8.75% { opacity: 1; }
+  18.75%, 27.5% { opacity: .05; }
+  37.5%, 46.25% { opacity: .02; }
+  56.25%, 100% { opacity: 0; }
+}
+@keyframes reel-opacity-campaign {
+  0%, 8.75% { opacity: .05; }
+  18.75%, 27.5% { opacity: 1; }
+  37.5%, 46.25% { opacity: .05; }
+  56.25%, 100% { opacity: .02; }
+}
+@keyframes reel-opacity-branding {
+  0%, 8.75% { opacity: .02; }
+  18.75%, 27.5% { opacity: .05; }
+  37.5%, 46.25% { opacity: 1; }
+  56.25%, 100% { opacity: .05; }
+}
+@keyframes reel-opacity-content-2 {
+  0%, 8.75% { opacity: .01; }
+  18.75%, 27.5% { opacity: .02; }
+  37.5%, 46.25% { opacity: .05; }
+  56.25%, 100% { opacity: 1; }
+}
+@keyframes preview-opacity-1 {
+  0%, 31.25% { opacity: 1; }
+  33.25%, 98% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes preview-opacity-2 {
+  0%, 31.25% { opacity: 0; }
+  33.25%, 64.5% { opacity: 1; }
+  66.5%, 100% { opacity: 0; }
+}
+@keyframes preview-opacity-3 {
+  0%, 64.5% { opacity: 0; }
+  66.5%, 98% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Figma motion is preserved, but users who request less animation can
+   inspect the page comfortably with static content. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .page-three.is-in-view .category-reel-track,
+  .page-three.is-in-view .reel-word,
+  .page-three.is-in-view .preview-image {
+    animation: none !important;
+  }
+  .panel-content { transition: none; }
+}
+
+/* ---------------- MOBILE / SMALL TABLETS ---------------- */
+@media (max-width: 850px) {
+  .portfolio-page {
+    height: auto;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+  .stage {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    min-height: 100svh;
+    transform: none;
+  }
+  .section-label { top: 38px; font-size: 12px; }
+  .label-left { left: 24px; }
+  .label-right { right: 24px; }
+
+  .page-one .stage { padding: 78px 24px 145px; }
+  .cover-name {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    font-size: clamp(58px, 12vw, 108px);
+    line-height: .94;
+    letter-spacing: -.046em;
+    white-space: normal;
+    overflow-wrap: normal;
+  }
+  .cover-services {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 20px;
+    column-gap: 12px;
+    margin-top: 40px;
+  }
+  .cover-services .service-item {
+    position: static;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .cover-year {
+    right: 24px;
+    bottom: 38px;
+    gap: 6px;
+    font-size: 22px;
+    letter-spacing: -.04em;
+  }
+  .cover-year .cover-bracket { font-size: 28px; }
+
+  .page-two .stage {
+    padding: 132px 24px 72px;
+  }
+  .introduce-headline {
+    position: static;
+    white-space: normal;
+    font-size: clamp(29px, 7.5vw, 52px);
+    letter-spacing: -.05em;
+    line-height: 1.3;
+  }
+  .introduce-statement {
+    position: static;
+    margin-top: 34px;
+    white-space: normal;
+  }
+  .introduce-statement h3 {
+    font-size: 19px;
+    line-height: 1.3;
+    letter-spacing: -.035em;
+    margin-bottom: 12px;
+  }
+  .introduce-statement p {
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: -.025em;
+  }
+  .introduce-statement br { display: none; }
+  .panel-stack {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin-top: 78px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .info-panel {
+    position: static;
+    width: 100%;
+  }
+  .panel-bar {
+    width: 100%;
+    height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+  }
+  .panel-content,
+  .panel-about .panel-content,
+  .panel-education .panel-content,
+  .panel-career .panel-content {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    padding: 18px 20px;
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+  .info-panel:hover .panel-content,
+  .info-panel:focus-within .panel-content,
+  .info-panel.is-open .panel-content { display: block; }
+  .contact-list > div,
+  .record-list > div {
+    font-size: 12px;
+    letter-spacing: -.03em;
+    white-space: normal;
+  }
+  .contact-list > div + div,
+  .record-list > div + div { margin-top: 14px; }
+
+  .page-three .stage { min-height: 100svh; height: 100svh; }
+  .category-reel {
+    left: 24px;
+    top: 34%;
+    width: calc(100% - 48px);
+    height: 500px;
+  }
+  .reel-word {
+    font-size: clamp(61px, 17vw, 115px);
+    letter-spacing: -.045em;
+    line-height: 1.05;
+  }
+  .reel-campaign { top: 135px; }
+  .reel-branding { top: 270px; }
+  .reel-content-2 { top: 405px; }
+  .page-three.is-in-view .category-reel-track {
+    animation-name: reel-move-mobile;
+  }
+  .category-preview {
+    inset: auto 0 auto auto;
+    top: 22%;
+    right: 24px;
+    width: 190px;
+    height: 100px;
+  }
+  .preview-image-stack {
+    left: 45px;
+    top: 0;
+    width: 100px;
+    height: 100px;
+  }
+  .preview-paren {
+    top: 14px;
+    font-size: 48px;
+  }
+  .preview-paren-left { left: 0; }
+  .preview-paren-right { left: 155px; }
+}
+@keyframes reel-move-mobile {
+  0%, 8.75% { transform: translateY(0); }
+  18.75%, 27.5% { transform: translateY(-135px); }
+  37.5%, 46.25% { transform: translateY(-270px); }
+  56.25%, 100% { transform: translateY(-405px); }
+}
+.preview-image.is-missing { display: none; }
