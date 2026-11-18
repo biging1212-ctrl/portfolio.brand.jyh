@@ -222,118 +222,161 @@
     if (p && typeof p.catch === 'function') p.catch(() => {});
   };
 
-  /* Decode actual GIF frame timing. GIF does not provide an HTML 'ended' event. */
-  const gifMs = (buffer) => {
-    const b = new Uint8Array(buffer);
-    if (b.length < 13 || String.fromCharCode(...b.slice(0, 3)) !== 'GIF') return 3000;
+  /* PAGE 08 — one COMPLETE GIF cycle per character, then next character.
+     Browsers do not emit an `ended` event for GIF images. Parse the real GIF
+     Graphic Control Extension delays rather than using a nominal 3-second
+     cutoff. A failed timing read MUST NOT advance prematurely. */
+  function gifDurationMs(arrayBuffer) {
+    const bytes = new Uint8Array(arrayBuffer);
+    if (bytes.length < 13 || ![71, 73, 70].every((v, i) => bytes[i] === v)) return null;
     let offset = 13;
-    const packed = b[10];
-    if (packed & 128) offset += 3 * (1 << ((packed & 7) + 1));
-    let delay = 10, total = 0, frames = 0;
-    const skipBlocks = () => {
-      while (offset < b.length) {
-        const len = b[offset++];
-        if (!len) break;
-        offset += len;
+    if (bytes[10] & 0x80) offset += 3 * (1 << ((bytes[10] & 7) + 1));
+    let lastDelay = 100;
+    let total = 0;
+    let frames = 0;
+    const skipSubBlocks = () => {
+      while (offset < bytes.length) {
+        const size = bytes[offset++];
+        if (!size) return true;
+        offset += size;
+        if (offset > bytes.length) return false;
       }
+      return false;
     };
-    while (offset < b.length && frames < 10000) {
-      const id = b[offset++];
-      if (id === 0x3b) break;
-      if (id === 0x21) {
-        const kind = b[offset++];
-        if (kind === 0xf9 && b[offset] === 4) {
-          delay = b[offset + 2] | (b[offset + 3] << 8);
+    while (offset < bytes.length) {
+      const marker = bytes[offset++];
+      if (marker === 0x3b) break; // GIF trailer
+      if (marker === 0x21) { // extension
+        const label = bytes[offset++];
+        if (label === 0xf9 && bytes[offset] === 4) {
+          const centiseconds = bytes[offset + 2] | (bytes[offset + 3] << 8);
+          // Chromium clamps very short GIF delays; prefer actual frame delay.
+          lastDelay = centiseconds <= 1 ? 100 : centiseconds * 10;
         }
-        skipBlocks();
-      } else if (id === 0x2c) {
-        if (offset + 9 > b.length) break;
-        const localPacked = b[offset + 8];
+        if (!skipSubBlocks()) return null;
+      } else if (marker === 0x2c) { // image descriptor
+        if (offset + 9 > bytes.length) return null;
+        const flags = bytes[offset + 8];
         offset += 9;
-        if (localPacked & 0x80) offset += 3 * (1 << ((localPacked & 7) + 1));
-        offset++; // LZW code size
-        skipBlocks();
-        total += Math.max(delay, 2) * 10;
-        frames++; delay = 10;
-      } else break;
+        if (flags & 0x80) offset += 3 * (1 << ((flags & 7) + 1));
+        offset++; // minimum LZW code size
+        if (!skipSubBlocks()) return null;
+        total += lastDelay;
+        frames++;
+        lastDelay = 100;
+      } else {
+        return null;
+      }
     }
-    return frames > 0 ? Math.max(total, 150) : 3000;
-  };
+    return frames ? { total, frames } : null;
+  }
 
-  /* PAGE 08: 단디 (one GIF cycle) → 똑디 → 우디 → 단디 ... .
-     Non-active characters show the captured first frame as a static canvas.
-     When an image is activated a new Blob URL resets it to frame 1. */
   const page08 = document.getElementById('page-08');
   if (page08) {
-    const wrappers = Array.from(page08.querySelectorAll('.p08-fidelity-character'));
-    const entries = wrappers.map(wrapper => {
-      const img = wrapper.querySelector('img[data-sequence-gif]');
-      if (!img) return null;
-      const src = img.dataset.sequenceGif || img.getAttribute('src');
-      const canvas = document.createElement('canvas');
-      canvas.className = 'p08-gif-poster';
-      canvas.setAttribute('aria-hidden', 'true');
-      wrapper.insertBefore(canvas, img);
-      const entry = { wrapper, img, canvas, src, blob: null, ms: Number(img.dataset.expectedGifMs) || 3000, liveUrl: null };
-      fetch(src).then(r => { if (!r.ok) throw new Error(String(r.status)); return r.blob(); })
-        .then(async blob => {
-          entry.blob = blob;
-          entry.ms = gifMs(await blob.arrayBuffer());
-        }).catch(() => { /* file:// browsing can disallow fetch; use nominal fallback. */ });
-      const frame = () => {
-        try {
-          if (!img.naturalWidth) return;
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          canvas.getContext('2d')?.drawImage(img, 0, 0);
-        } catch (_) { canvas.style.display = 'none'; }
-      };
-      if (img.complete && img.naturalWidth) frame();
-      else img.addEventListener('load', frame, { once: true });
-      return entry;
-    }).filter(Boolean);
-    let current = -1, timer = null, showing = false;
-    const hide = e => {
-      e.wrapper.classList.remove('is-gif-active');
-      e.img.style.visibility = 'hidden';
-      if (e.liveUrl) {
-        const old = e.liveUrl;
-        e.liveUrl = null;
-        e.img.removeAttribute('src');
-        URL.revokeObjectURL(old);
+    const entries = Array.from(page08.querySelectorAll('.p08-fidelity-character'))
+      .map(wrapper => {
+        const img = wrapper.querySelector('img[data-sequence-gif]');
+        if (!img) return null;
+        const src = img.dataset.sequenceGif || img.getAttribute('src');
+        const canvas = document.createElement('canvas');
+        canvas.className = 'p08-gif-poster';
+        canvas.setAttribute('aria-hidden', 'true');
+        wrapper.insertBefore(canvas, img);
+        const entry = { wrapper, img, canvas, src, blob: null, duration: null, activeUrl: null };
+        // Capture the first frame as a stationary poster for inactive characters.
+        const snapshot = () => {
+          try {
+            if (!img.naturalWidth) return;
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.getContext('2d')?.drawImage(img, 0, 0);
+          } catch (_) { canvas.style.display = 'none'; }
+        };
+        if (img.complete && img.naturalWidth) snapshot();
+        else img.addEventListener('load', snapshot, { once: true });
+        entry.read = fetch(src, { cache: 'force-cache' })
+          .then(resp => { if (!resp.ok) throw new Error('HTTP ' + resp.status); return resp.blob(); })
+          .then(async blob => {
+            const duration = gifDurationMs(await blob.arrayBuffer());
+            if (!duration) throw new Error('GIF frame duration unavailable: ' + src);
+            entry.blob = blob;
+            entry.duration = duration.total;
+            return true;
+          })
+          .catch(err => {
+            console.warn('[page-08] GIF duration could not be read; refusing to cut animation early:', src, err);
+            return false;
+          });
+        return entry;
+      }).filter(Boolean);
+
+    let visible = false;
+    let ready = false;
+    let timer = null;
+    let current = -1;
+    let generation = 0;
+    function hide(entry) {
+      entry.wrapper.classList.remove('is-gif-active');
+      entry.img.style.visibility = 'hidden';
+      if (entry.activeUrl) {
+        URL.revokeObjectURL(entry.activeUrl);
+        entry.activeUrl = null;
       }
-    };
-    const show = index => {
-      if (!showing || !entries.length) return;
+    }
+    function playCharacter(index) {
+      if (!visible || !ready || !entries.length) return;
+      clearTimeout(timer);
       entries.forEach(hide);
-      const e = entries[index];
       current = index;
-      e.wrapper.classList.add('is-gif-active');
-      e.img.style.visibility = 'visible';
-      if (e.blob) {
-        e.liveUrl = URL.createObjectURL(e.blob);
-        e.img.src = e.liveUrl;
-      } else {
-        // Creating a new URL resets the animation even when the image is cached.
-        e.img.src = e.src + (e.src.includes('?') ? '&' : '?') + 'replay=' + Date.now();
+      const entry = entries[index];
+      const token = ++generation;
+      entry.wrapper.classList.add('is-gif-active');
+      entry.img.style.visibility = 'visible';
+      // A fresh blob URL always starts the GIF at its FIRST frame.
+      const url = URL.createObjectURL(entry.blob);
+      entry.activeUrl = url;
+      let clockStarted = false;
+      const startClock = () => {
+        if (clockStarted || token !== generation || !visible) return;
+        clockStarted = true;
+        // Do not switch until the last frame's full recorded delay has elapsed.
+        timer = window.setTimeout(() => {
+          if (visible && token === generation) playCharacter((index + 1) % entries.length);
+        }, entry.duration);
+      };
+      entry.img.addEventListener('load', startClock, { once: true });
+      entry.img.src = url;
+      if (entry.img.complete && entry.img.naturalWidth) startClock();
+    }
+    // Important: do NOT begin the first timer while the GIF file is still
+    // downloading. That was why long GIFs got cut at 3 seconds.
+    Promise.all(entries.map(entry => entry.read)).then(results => {
+      ready = results.length === 3 && results.every(Boolean);
+      if (visible && ready) playCharacter(0);
+      if (!ready) {
+        // If file:// blocks fetch or a GIF is malformed, display Dandi
+        // continuously instead of cutting characters short with a guess.
+        const first = entries[0];
+        if (first) {
+          entries.forEach(hide);
+          first.wrapper.classList.add('is-gif-active');
+          first.img.style.visibility = 'visible';
+          first.img.src = first.src;
+        }
       }
-      timer = setTimeout(() => show((index + 1) % entries.length), Math.max(150, e.ms));
-    };
-    watchSection(page08, visible => {
-      if (visible && !showing) { showing = true; show(0); }
-      else if (!visible && showing) {
-        showing = false; clearTimeout(timer);
-        entries.forEach(hide);
-      }
+    });
+    watchSection(page08, on => {
+      if (on === visible) return;
+      visible = on;
+      clearTimeout(timer);
+      ++generation;
+      if (!visible) { entries.forEach(hide); return; }
+      if (ready) playCharacter(0);
     });
   }
 
-  /* PAGE 20: own visibility class, no competing work-page observer timeline. */
-  const page20 = document.getElementById('page-20');
-  watchSection(page20, visible => {
-    if (!page20) return;
-    page20.classList.toggle('is-wipe-playing', visible);
-  });
+  /* PAGE 20: the Figma six-second wipe is CSS-driven unconditionally.
+     It does not depend on a timing-sensitive IntersectionObserver class. */
 
   /* Background video or GIF; poster (existing Figma image) remains until loading.
      Prefer MP4, then WebM, then GIF.  A GIF is an image, not a <video>. */
@@ -463,4 +506,23 @@
       step();
     });
   }
+})();
+
+
+/* Figma pages 66–81: image file extension fallbacks. Keep original layer stems.
+   The actual user assets were not supplied in this archive; these try png,
+   jpg, jpeg and webp without changing Figma's basename. */
+(() => {
+  const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+  document.querySelectorAll('.figma-sequence-page img.f7-img[data-asset-stem]').forEach(img => {
+    const stem = img.dataset.assetStem;
+    const root = './assets/project07/image/' + stem + '.';
+    let index = extensions.findIndex(ext => img.getAttribute('src')?.endsWith('.' + ext));
+    if (index < 0) index = 0;
+    img.addEventListener('error', () => {
+      index++;
+      if (index < extensions.length) img.src = root + extensions[index];
+      else img.classList.add('is-missing');
+    });
+  });
 })();

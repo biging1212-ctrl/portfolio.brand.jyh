@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Gothic&family=Pragati+Narrow:wght@400;700&display=swap');
 
 /* ===== 기존 style.css / 병합 시작 ===== */
 /* ==========================================================
@@ -562,10 +563,8 @@ button:focus-visible, a:focus-visible {
 }
 
 /* Real source assets are fetched by the supplied Windows asset downloader. */
-.work-page[data-missing-assets="true"]::after{content:"Figma 원본 이미지 미설치 · download-assets.bat 실행 필요";position:absolute;bottom:24px;right:24px;background:rgba(0,0,0,.82);color:#fff;font:500 12px/1.4 var(--font-ko);padding:9px 14px;border-radius:6px;pointer-events:none;z-index:20;}
 .work-page .p05-ticker,.work-page .p10-slide{animation-play-state:paused;}
 .work-page.is-in-view .p05-ticker,.work-page.is-in-view .p10-slide{animation-play-state:running;}
-@media(max-width:850px){.work-page[data-missing-assets="true"]::after{left:12px;right:12px;bottom:6px;text-align:center;font-size:9px;padding:5px;}}
 /* Preserve Figma's decorative SVG clip and ring assets when installed. */
 .p04-symbols .p04-arch {-webkit-mask-image:url('./assets/project01/image/p04-imgGroup.svg');mask-image:url('./assets/project01/image/p04-imgGroup.svg');-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
 .p05-goods,.p05-content{background-image:url('./assets/project01/image/p05-imgEllipse1806.svg');background-size:100% 100%;background-repeat:no-repeat;}
@@ -1618,3 +1617,163 @@ button:focus-visible, a:focus-visible {
 /* page58: Figma image fills use FILL, not CONTAIN. */
 .page-58 .f58-base,.page-58 .f58-previous-logo,
 .page-58 .f58-new-logo,.page-58 .f58-3d-logo{object-fit:cover!important;object-position:center!important;}
+
+
+/* ===== 2026-11-18 · Verified corrective patch: 08 / 20 / 34 / 50 / 55 / 58 ===== */
+/* No fake 'download-assets.bat' warning: media can play correctly even if an
+   optional source-image poster is not installed. Keep broken image icons hidden. */
+.work-page[data-missing-assets="true"]::after { content:none!important;display:none!important; }
+
+/* PAGE 20: Figma 6s diagonal wipes, including transition 3 -> 1.
+   Original masks move from X=0 to X=2527 at 26.667–33.333%, 60–66.667%,
+   and 93–98% of the timeline. The animation works without JS view classes. */
+.page-20 .lot-message-2,
+.page-20 .lot-message-3,
+.page-20 .lot-message-4 { clip-path: polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);will-change:clip-path; }
+.page-20 .lot-message-2 {animation:p20-diagonal-2 6s linear infinite!important;}
+.page-20 .lot-message-3 {animation:p20-diagonal-3 6s linear infinite!important;}
+.page-20 .lot-message-4 {animation:p20-diagonal-4 6s linear infinite!important;}
+/* Older rules set animation:none!important; these selectors explicitly override. */
+.page-20 .lot-message img {object-fit:fill!important;}
+@keyframes p20-diagonal-2 {
+  0%,26.667% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);animation-timing-function:ease-in-out;}
+  33.333%,98% {clip-path:polygon(0 0,140% 0,120% 100%,0 100%);}
+  99.667%,100% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);}
+}
+@keyframes p20-diagonal-3 {
+  0%,60% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);animation-timing-function:ease-in-out;}
+  66.667%,98% {clip-path:polygon(0 0,140% 0,120% 100%,0 100%);}
+  99.667%,100% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);}
+}
+@keyframes p20-diagonal-4 {
+  0%,93% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);animation-timing-function:ease-in-out;}
+  98%,99.667% {clip-path:polygon(0 0,140% 0,120% 100%,0 100%);}
+  100% {clip-path:polygon(-30% 0,-20% 0,-40% 100%,-50% 100%);}
+}
+/* User explicitly requested this motion; avoid a system reduced-motion override
+   silently turning this ONE portfolio showcase into a static frame. */
+@media (prefers-reduced-motion:reduce) {
+  .page-20 .lot-message-2,.page-20 .lot-message-3,.page-20 .lot-message-4 {
+    animation-duration:6s!important;animation-iteration-count:infinite!important;
+  }
+}
+
+/* PAGE 50: EXACT original Pretendard type. Remove previous scaleX(.80457),
+   which physically compressed all letterforms and was not in the Figma file. */
+.page-50 .p50-character-description {
+  position:absolute;left:1038px;top:316px;width:704px;max-width:704px;
+  height:auto;transform:none!important;transform-origin:initial;
+  white-space:nowrap;overflow:visible;word-break:keep-all;
+  font-family:var(--font-ko);font-size:16px;font-weight:400;
+  line-height:1.7;letter-spacing:-.64px;color:#3e3e3e;
+  z-index:4;
+}
+.page-50 .p50-skill-row {
+  position:absolute;left:1017px;top:394px;width:729px;height:45.25px;
+  display:flex;justify-content:space-between;gap:0;align-items:center;
+}
+.page-50 .p50-skill-row span {
+  flex:none;height:45.25px;box-sizing:border-box;
+  padding:0;border:1.784px solid #432b64;border-radius:68.6px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--font-ko);font-size:22.925px;line-height:1.3;
+  font-weight:500;letter-spacing:-.917px;white-space:nowrap;
+}
+.page-50 .p50-skill-row span:nth-child(1){width:168.11px;}
+.page-50 .p50-skill-row span:nth-child(2){width:145.19px;}
+.page-50 .p50-skill-row span:nth-child(3){width:146.72px;}
+.page-50 .p50-skill-row span:nth-child(4){width:158.94px;}
+
+/* PAGE 55: restore black Figma background, original circular glass weights,
+   line endpoints and exact copy alignment. Glow image page-55.png is already
+   mapped to original Figma layer x632 y237 w655 h655. */
+.page-55 .f55-stage {background:#030303!important;}
+.page-55 .f55-glow {left:632px;top:237px;width:655px;height:655px;
+  transform:none;opacity:.82;filter:blur(37px);
+  background:radial-gradient(circle at 50% 48%,rgba(0,84,250,.88) 0%,rgba(0,84,250,.55) 31%,rgba(0,84,250,.18) 52%,transparent 76%);
+}
+.page-55 .f55-bubble {
+  width:310px;height:310px;border:1px solid rgba(225,234,255,.35);
+  background:radial-gradient(circle at 80% 74%,rgba(0,93,255,.32) 0%,transparent 48%),
+             linear-gradient(145deg,rgba(67,67,67,.88) 0%,rgba(43,43,43,.88) 64%,rgba(34,34,34,.9) 100%);
+  box-shadow:inset 0 0 2px rgba(255,255,255,.19);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+}
+.page-55 .f55-bubble-label{padding-top:117px;font:400 22px/1.5 var(--font-ko);letter-spacing:-.88px;}
+.page-55 .f55-bubble-label b{font-weight:700;}
+.page-55 .f55-source-glow{left:632px;top:237px;width:655px;height:655px;object-fit:cover;}
+
+/* PAGE 58: these are individual Figma image FILL rectangles. The generic
+   '.work-page .figma-image{width:100%;height:100%}' had overridden their sizes. */
+.page-58 img.f58-base{position:absolute!important;left:0!important;top:453px!important;width:1920px!important;height:627px!important;object-fit:cover!important;max-width:none!important;z-index:1;}
+.page-58 img.f58-previous-logo{position:absolute!important;left:364.63px!important;top:34.29px!important;width:330.46px!important;height:127.2px!important;object-fit:cover!important;max-width:none!important;z-index:2;}
+.page-58 img.f58-new-logo{position:absolute!important;left:831px!important;top:48px!important;width:259px!important;height:116px!important;object-fit:cover!important;max-width:none!important;z-index:2;}
+.page-58 img.f58-3d-logo{position:absolute!important;left:1273px!important;top:-49px!important;width:315.2px!important;height:315.2px!important;object-fit:cover!important;max-width:none!important;z-index:2;}
+.page-58 .f58-divider,.page-58 .f58-label{z-index:3;}
+
+
+/* ============================================================
+  FIGMA FIDELITY — PAGES 66–81 (source design: 1920×1080)
+  Scoped to requested pages; no existing 01–65 or 82–83 styles changed.
+  Values are design-space pixels; outer .stage uses existing width scaling.
+============================================================ */
+.figma-sequence-page .stage{overflow:hidden;position:relative;}
+.figma-sequence-page .stage *, .figma-sequence-page .stage *::before, .figma-sequence-page .stage *::after{box-sizing:border-box;}
+.figma-sequence-page .f7-asset{position:absolute;margin:0;}
+.figma-sequence-page .f7-img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
+.figma-sequence-page .f7-fill .f7-img,.figma-sequence-page .f7-cover .f7-img,.figma-sequence-page .f7-collage .f7-img{object-fit:cover;}
+.figma-sequence-page .f7-img.is-missing{visibility:hidden;}
+.figma-sequence-page .f7-text{position:absolute;margin:0;z-index:6;}
+.figma-sequence-page .f7-section-title{font:600 20px/1.25 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.4px;color:#fff;white-space:nowrap;}
+.figma-sequence-page .f7-cover-copy{position:absolute;inset:0;color:white;pointer-events:none;}
+.figma-sequence-page .f7-cover-title{position:absolute;left:100px;top:100px;display:flex;flex-direction:column;gap:8px;white-space:nowrap;}
+.figma-sequence-page .f7-cover-title span{font:600 20px/1.25 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.4px;}
+.figma-sequence-page .f7-cover-title strong{font:600 25px/1.25 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.5px;}
+.figma-sequence-page .f7-cover-facts{position:absolute;top:100px;left:1188px;display:grid;grid-template-columns:217px 218px 240px;}
+.figma-sequence-page .f7-cover-facts>div{display:flex;flex-direction:column;gap:13px;}
+.figma-sequence-page .f7-cover-facts b{font:600 18px/1.25 var(--font-ko,'Pretendard',sans-serif);}
+.figma-sequence-page .f7-cover-facts span{font:300 16px/1.3 var(--font-ko,'Pretendard',sans-serif);white-space:nowrap;letter-spacing:-.32px;}
+.figma-sequence-page .f7-desc{position:absolute;left:100px;top:100px;display:grid;grid-template-columns:665px 955px;column-gap:35px;z-index:5;color:#fff;}
+.figma-sequence-page .f7-desc h2{font:600 20px/1.25 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.4px;margin:0;text-transform:uppercase;color:#fff;}
+.figma-sequence-page .f7-desc p{font:400 16px/1.7 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.64px;margin:0;color:#fff;}
+.page-67.figma-sequence-page .f7-issue{position:absolute;color:#000;z-index:3;font:400 20px/1.3 var(--font-ko,'Pretendard',sans-serif);white-space:nowrap;}
+.page-67.figma-sequence-page .f7-issue span,.page-67.figma-sequence-page .f7-issue p{display:table;width:max-content;max-width:400px;background:#e32626;padding:4px 9px;margin:0 0 6px 0;}
+.page-67.figma-sequence-page .f7-issue span{font:600 18px/1.3 var(--font-ko,'Pretendard',sans-serif);}
+.page-68.figma-sequence-page .f7-red-tag{background:#e32626;color:#000;font:700 22px/1.5 var(--font-ko,'Pretendard',sans-serif);padding:0 14px;transform:rotate(-3deg);}
+.page-68.figma-sequence-page .f7-goal-text{color:white;font:400 18px/1.7 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.72px;text-align:center;}
+.page-68.figma-sequence-page .f7-goal-label{color:#f72c2c;font:600 22px/1.25 var(--font-ko,'Pretendard',sans-serif);}
+.page-68.figma-sequence-page .f7-goal-target{color:white;font:400 30px/1.4 var(--font-ko,'Pretendard',sans-serif);text-align:center;letter-spacing:-1.2px;}
+.page-68.figma-sequence-page .f7-goal-target strong{font-weight:700;}
+.page-70.figma-sequence-page .f7-type-annotation,.page-71.figma-sequence-page .f7-type-annotation{font:500 18px/1.25 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.36px;white-space:nowrap;}
+.page-70.figma-sequence-page .f7-type-annotation.red{color:#e00100;}.page-70.figma-sequence-page .f7-type-annotation.white,.page-71.figma-sequence-page .f7-type-annotation.white{color:#fff;}
+.page-71.figma-sequence-page .f7-type-sample{color:#999;font-size:20px;line-height:1.2;white-space:nowrap;letter-spacing:-.6px;}
+.page-71.figma-sequence-page .f7-league{font-family:'League Gothic','Impact',sans-serif;letter-spacing:.6px;}
+.page-71.figma-sequence-page .f7-pragati{font-family:'Pragati Narrow','Arial Narrow',sans-serif;letter-spacing:-.6px;}
+.page-71.figma-sequence-page .f7-swatch{position:absolute;}
+.page-71.figma-sequence-page .f7-swatch-image{z-index:2;}
+.page-71.figma-sequence-page .f7-swatch-label{font-family:'League Gothic','Impact',sans-serif;font-size:24px;line-height:1.3;z-index:3;}
+.page-71.figma-sequence-page .f7-swatch-label small{display:block;font:300 10px/1.45 var(--font-ko,'Pretendard',sans-serif);margin-top:6px;}
+.page-72.figma-sequence-page .f7-ingredient-name{font:400 60px/1.25 'League Gothic','Impact','Arial Narrow',sans-serif;text-transform:uppercase;color:white;letter-spacing:-2px;white-space:nowrap;text-align:center;z-index:7;}
+.page-73.figma-sequence-page .f7-rule{position:absolute;background:#fff;z-index:7;pointer-events:none;}
+.page-73.figma-sequence-page .f7-p73-label{font:400 25px/1.25 'League Gothic','Impact',sans-serif;color:#fff;white-space:nowrap;z-index:8;}
+.page-73.figma-sequence-page .f7-p73-copy{font:300 16px/1.8 var(--font-ko,'Pretendard',sans-serif);letter-spacing:-.64px;color:#fff;white-space:nowrap;z-index:8;}
+/* Figma page-73: four layered package compositions, eight-second timeline */
+.page-73.is-in-view .f7-frame-1{animation:f7-p73-a 8s linear infinite;}
+.page-73.is-in-view .f7-frame-2{animation:f7-p73-b 8s linear infinite;}
+.page-73.is-in-view .f7-frame-3{animation:f7-p73-c 8s linear infinite;}
+.page-73.is-in-view .f7-frame-4{animation:f7-p73-d 8s linear infinite;}
+@keyframes f7-p73-a{0%,12.304%{opacity:1}12.442%,49.155%{opacity:0}49.913%,62.613%{opacity:1}62.887%,100%{opacity:0}}
+@keyframes f7-p73-b{0%,25.009%{opacity:1}25.104%,61.928%{opacity:0}62.513%,75.113%{opacity:1}75.275%,100%{opacity:0}}
+@keyframes f7-p73-c{0%,37.47%{opacity:1}37.62%,75.113%{opacity:0}75.238%,87.338%{opacity:1}87.538%,100%{opacity:0}}
+@keyframes f7-p73-d{0%,49.816%{opacity:1}50.019%,87.338%{opacity:0}87.538%,100%{opacity:1}}
+/* Figma page-75: two-image composited alternating scene, five seconds */
+.page-75.is-in-view .f7-frame-1{animation:f7-p75 5s linear infinite;}
+@keyframes f7-p75{0%,38%{opacity:1}44%,93%{opacity:0}100%{opacity:1}}
+/* Figma page-80: four-image sequence, 1s intervals / 4s loop */
+.page-80.is-in-view .f7-frame-1{animation:f7-p80-1 4s linear infinite;}
+.page-80.is-in-view .f7-frame-2{animation:f7-p80-2 4s linear infinite;}
+.page-80.is-in-view .f7-frame-3{animation:f7-p80-3 4s linear infinite;}
+@keyframes f7-p80-1{0%,24.962%{opacity:1}25.051%,100%{opacity:0}}
+@keyframes f7-p80-2{0%,49.979%{opacity:1}50.079%,100%{opacity:0}}
+@keyframes f7-p80-3{0%,74.973%{opacity:1}75.073%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.page-73.figma-sequence-page .f7-asset,.page-75.figma-sequence-page .f7-asset,.page-80.figma-sequence-page .f7-asset{animation:none!important;}}
