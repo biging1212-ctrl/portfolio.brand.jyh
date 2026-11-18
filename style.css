@@ -746,16 +746,16 @@ button:focus-visible, a:focus-visible {
 .index33-photo-2{opacity:0;}
 .page-33.is-in-view .index33-track{animation:index33-move 4s linear infinite;}
 .page-33.is-in-view .index33-word-1{animation:index33-w1 4s linear infinite;}.page-33.is-in-view .index33-word-2{animation:index33-w2 4s linear infinite;}.page-33.is-in-view .index33-word-3{animation:index33-w3 4s linear infinite;}.page-33.is-in-view .index33-word-4{animation:index33-w4 4s linear infinite;}.page-33.is-in-view .index33-word-5{animation:index33-w5 4s linear infinite;}
-.page-33.is-in-view .index33-photo-1,.page-33.is-in-view .index33-photo-1-overlay{animation:index33-i1 4s linear infinite;}
+.page-33.is-in-view .index33-photo-1{animation:index33-i1 4s linear infinite;}
 .page-33.is-in-view .index33-photo-2{animation:index33-i2 4s linear infinite;}
-@keyframes index33-move{0%,8.75%{transform:translateY(0)}18.75%,27.5%{transform:translateY(-215px)}37.5%,46.25%{transform:translateY(-441px)}56.25%,100%{transform:translateY(-656px)}}
+@keyframes index33-move{0%{transform:translateY(0)}8.75%{transform:translateY(0);animation-timing-function:cubic-bezier(.65,0,.35,1)}18.75%{transform:translateY(-215px)}27.5%{transform:translateY(-215px);animation-timing-function:cubic-bezier(.65,0,.35,1)}37.5%{transform:translateY(-441px)}46.25%{transform:translateY(-441px);animation-timing-function:cubic-bezier(.65,0,.35,1)}56.25%,100%{transform:translateY(-656px)}}
 @keyframes index33-w1{0%,8.75%{opacity:.01}18.75%,100%{opacity:0}}
 @keyframes index33-w2{0%,8.75%{opacity:1}18.75%,27.5%{opacity:.05}37.5%,46.25%{opacity:.02}56.25%,100%{opacity:0}}
 @keyframes index33-w3{0%,8.75%{opacity:.05}18.75%,27.5%{opacity:1}37.5%,46.25%{opacity:.05}56.25%,100%{opacity:.02}}
 @keyframes index33-w4{0%,8.75%{opacity:.02}18.75%,27.5%{opacity:.05}37.5%,46.25%{opacity:1}56.25%,100%{opacity:.05}}
 @keyframes index33-w5{0%,8.75%{opacity:.01}18.75%,27.5%{opacity:.02}37.5%,46.25%{opacity:.05}56.25%,100%{opacity:1}}
-@keyframes index33-i1{0%,48%{opacity:1}50%,98%{opacity:0}100%{opacity:1}}
-@keyframes index33-i2{0%,48%{opacity:0}50%,98%{opacity:1}100%{opacity:0}}
+@keyframes index33-i1{0%{opacity:1}48%{opacity:1;animation-timing-function:ease-in-out}50%{opacity:0}98%{opacity:0;animation-timing-function:ease-in-out}100%{opacity:1}}
+@keyframes index33-i2{0%{opacity:0}48%{opacity:0;animation-timing-function:ease-in-out}50%{opacity:1}98%{opacity:1;animation-timing-function:ease-in-out}100%{opacity:0}}
 @media(prefers-reduced-motion:reduce){
   .project-extra *{animation-duration:0s!important;animation-iteration-count:1!important;transition-duration:0s!important;}
 }
@@ -890,8 +890,8 @@ button:focus-visible, a:focus-visible {
 @keyframes p55-w2{0%,8.75%{opacity:.05}18.75%,27.5%{opacity:1}37.5%,46.25%{opacity:.05}56.25%,100%{opacity:.02}}
 @keyframes p55-w3{0%,8.75%{opacity:.02}18.75%,27.5%{opacity:.05}37.5%,46.25%{opacity:1}56.25%,100%{opacity:.05}}
 @keyframes p55-w4{0%,8.75%{opacity:.01}18.75%,27.5%{opacity:.02}37.5%,46.25%{opacity:.05}56.25%,100%{opacity:1}}
-@keyframes p55-a1{0%,48%{opacity:1}50%,98%{opacity:0}100%{opacity:1}}
-@keyframes p55-a2{0%,48%{opacity:0}50%,98%{opacity:1}100%{opacity:0}}
+@keyframes p55-a1{0%{opacity:1}48%{opacity:1;animation-timing-function:ease-in-out}50%{opacity:0}98%{opacity:0;animation-timing-function:ease-in-out}100%{opacity:1}}
+@keyframes p55-a2{0%{opacity:0}48%{opacity:0;animation-timing-function:ease-in-out}50%{opacity:1}98%{opacity:1;animation-timing-function:ease-in-out}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){
   .added-page *{animation:none!important;transition:none!important;}
 }
