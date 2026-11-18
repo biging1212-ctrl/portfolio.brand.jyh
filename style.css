@@ -1777,3 +1777,79 @@ button:focus-visible, a:focus-visible {
 @keyframes f7-p80-2{0%,49.979%{opacity:1}50.079%,100%{opacity:0}}
 @keyframes f7-p80-3{0%,74.973%{opacity:1}75.073%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.page-73.figma-sequence-page .f7-asset,.page-75.figma-sequence-page .f7-asset,.page-80.figma-sequence-page .f7-asset{animation:none!important;}}
+
+
+/* ============================================================
+  2026-11-18 · Verified follow-up: pages 02,08,20,55,71,77
+  Coordinates are in original Figma 1920px artboard; global stage scaling remains.
+============================================================ */
+/* page 02: source English headline y=300, Korean block y=346 (not y=364). */
+#page-02 .introduce-statement{left:100px;top:300px;}
+#page-02 .introduce-statement h3{
+  font-family:'Fustat',var(--font-latin);font-size:30px;line-height:39px;
+  font-weight:800;letter-spacing:-1.2px;margin:0 0 7px;
+}
+#page-02 .introduce-statement p{
+  font-family:'Fustat',var(--font-ko);font-size:28px;line-height:42px;
+  font-weight:600;letter-spacing:-1.12px;margin:0;
+}
+/* page 08: static snapshot is ONLY for INACTIVE character. Never overprint a
+   playing transparent GIF with a second identical bitmap. GIF timing untouched. */
+#page-08 .p08-fidelity-character.is-gif-active>.p08-gif-poster{
+  display:none!important;visibility:hidden!important;opacity:0!important;
+}
+#page-08 .p08-fidelity-character:not(.is-gif-active)>.p08-gif-poster{
+  display:block;visibility:visible;opacity:1;
+}
+/* page 20: supersede legacy circular / diagonal keyframe rules. The scripted
+   Web Animations API owns clipping & endlessly repeats the Figma 6s timeline. */
+#page-20 .lot-message-2,
+#page-20 .lot-message-3,
+#page-20 .lot-message-4{
+  animation:none!important;
+  clip-path:polygon(-50% 0,-40% 0,-60% 100%,-70% 100%);
+  will-change:clip-path;
+}
+/* page 55: SVG paths follow the three exact Figma line rectangles. */
+#page-55 .f55-connectors-figma{
+  position:absolute;left:0;top:0;width:1920px;height:1080px;
+  z-index:2;overflow:visible;pointer-events:none;
+}
+#page-55 .f55-connect{display:none!important;}
+/* page 71: source color names use League Gothic Regular 24px. Previous <b>
+   created bold synthetic lettering, and Impact was a too-heavy fallback. */
+#page-71 .f7-swatch-label{font-family:'League Gothic','Arial Narrow','Liberation Sans Narrow',sans-serif;
+  font-size:24px;line-height:1.3;font-weight:400;letter-spacing:0;
+  font-synthesis:none;}
+#page-71 .f7-swatch-label .f7-color-name{
+  font-family:inherit;font-weight:400!important;font-style:normal;
+  letter-spacing:0;white-space:nowrap;display:inline-block;
+}
+/* page 77: Figma 5-second loop. Images pop in in the first 0.8s, hold,
+   then reset and loop. Each image preserves its own exact layer position. */
+#page-77 .f7-collage{transform-origin:center center;transform:scale(0);}
+#page-77.is-in-view .f7-collage[data-layer="page-77-1"]{animation:f77-a1 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-2"]{animation:f77-a2 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-3"]{animation:f77-a3 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-4"]{animation:f77-a4 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-5"]{animation:f77-a5 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-6"]{animation:f77-a6 5s linear infinite!important;}
+#page-77.is-in-view .f7-collage[data-layer="page-77-7"]{animation:f77-a7 5s linear infinite!important;}
+@keyframes f77-a1{0%,5.557%{transform:scale(0)}10.707%,100%{transform:scale(1)}}
+@keyframes f77-a2{0%,11.169%{transform:scale(0)}14.263%{transform:scale(1.05)}14.897%{transform:scale(.95)}16.067%,100%{transform:scale(1)}}
+@keyframes f77-a3{0%,9.066%{transform:scale(0)}12.689%,100%{transform:scale(1)}}
+@keyframes f77-a4{0%,3.064%{transform:scale(0)}7.460%,100%{transform:scale(1)}}
+@keyframes f77-a5{0%,1.380%{transform:scale(0)}4.605%,100%{transform:scale(1)}}
+@keyframes f77-a6{0%,5.222%{transform:scale(0)}9.366%,100%{transform:scale(1)}}
+@keyframes f77-a7{0%,7.460%{transform:scale(0)}10.707%,100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){
+  /* Requested Figma sequence must remain animated even if a generic earlier
+     rule disables all motion on portfolio-extension pages. */
+  #page-77.is-in-view .f7-collage[data-layer="page-77-1"]{animation:f77-a1 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-2"]{animation:f77-a2 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-3"]{animation:f77-a3 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-4"]{animation:f77-a4 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-5"]{animation:f77-a5 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-6"]{animation:f77-a6 5s linear infinite!important;}
+  #page-77.is-in-view .f7-collage[data-layer="page-77-7"]{animation:f77-a7 5s linear infinite!important;}
+}
