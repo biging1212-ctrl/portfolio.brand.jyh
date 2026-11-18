@@ -151,7 +151,7 @@
 /* Background media: play muted videos only while their page is visible. */
 (() => {
   const scenes = Array.from(document.querySelectorAll('.portfolio-extension'));
-  const videos = Array.from(document.querySelectorAll('.portfolio-extension video[data-portfolio-video]'));
+  const videos = Array.from(document.querySelectorAll('.portfolio-extension video[data-portfolio-video], .page-22 video[data-portfolio-video]'));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const mediaObserver = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries => {
@@ -166,8 +166,8 @@
       }, { threshold: 0.10 }) : null;
   videos.forEach(v => {
     v.muted = true; v.playsInline = true;
-    v.addEventListener('error', () => v.closest('.portfolio-extension')?.setAttribute('data-media-unavailable','true'));
-    v.addEventListener('canplay', () => v.closest('.portfolio-extension')?.removeAttribute('data-media-unavailable'));
+    v.addEventListener('error', () => v.closest('.portfolio-extension, .page-22')?.setAttribute('data-media-unavailable','true'));
+    v.addEventListener('canplay', () => v.closest('.portfolio-extension, .page-22')?.removeAttribute('data-media-unavailable'));
     if (mediaObserver) mediaObserver.observe(v);
   });
   scenes.forEach(section => {
@@ -183,5 +183,46 @@
         img.addEventListener('load', () => section.removeAttribute('data-media-unavailable'));
       });
     }
+  });
+})();
+
+/* Figma page-52 full-screen source video: pause when not in viewport. */
+(() => {
+  const v=document.querySelector('#page-52 video');
+  if(!v) return;
+  v.muted=true;v.playsInline=true;
+  if('IntersectionObserver' in window){
+    const ob=new IntersectionObserver(([entry])=>{
+      if(entry.isIntersecting && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.play().catch(()=>{});}
+      else v.pause();
+    },{threshold:0.12});ob.observe(v);
+  }
+})();
+
+
+/* PAGE 51 — pause the two Figma reel videos outside the artboard viewport. */
+(() => {
+  const section = document.getElementById('page-51');
+  if (!section) return;
+  const videos = Array.from(section.querySelectorAll('video[data-portfolio-video]'));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const update = (visible) => {
+    videos.forEach((video) => {
+      video.muted = true;
+      video.playsInline = true;
+      if (visible && !reducedMotion.matches) video.play().catch(() => {});
+      else video.pause();
+    });
+  };
+  videos.forEach((video) => {
+    video.addEventListener('error', () => section.setAttribute('data-media-unavailable', 'true'));
+  });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(([entry]) => update(entry.isIntersecting), { threshold: 0.1 });
+    observer.observe(section);
+  } else update(true);
+  reducedMotion.addEventListener?.('change', () => {
+    const rect = section.getBoundingClientRect();
+    update(rect.bottom > 0 && rect.top < window.innerHeight);
   });
 })();
