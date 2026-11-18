@@ -200,29 +200,267 @@
 })();
 
 
-/* PAGE 51 — pause the two Figma reel videos outside the artboard viewport. */
+/* ===== 2026-11-18 / GIF sequencing and background media loader ===== */
 (() => {
-  const section = document.getElementById('page-51');
-  if (!section) return;
-  const videos = Array.from(section.querySelectorAll('video[data-portfolio-video]'));
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const update = (visible) => {
-    videos.forEach((video) => {
-      video.muted = true;
-      video.playsInline = true;
-      if (visible && !reducedMotion.matches) video.play().catch(() => {});
-      else video.pause();
-    });
+  'use strict';
+  const isVisible = (section) => {
+    if (!section) return false;
+    const r = section.getBoundingClientRect();
+    return r.bottom > 0 && r.top < innerHeight;
   };
-  videos.forEach((video) => {
-    video.addEventListener('error', () => section.setAttribute('data-media-unavailable', 'true'));
+  const watchSection = (section, fn) => {
+    if (!section) return;
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => fn(entry.isIntersecting));
+      }, { threshold: 0.04 });
+      observer.observe(section);
+    } else fn(true);
+  };
+  const playSafe = (v) => {
+    const p = v.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  };
+
+  /* Decode actual GIF frame timing. GIF does not provide an HTML 'ended' event. */
+  const gifMs = (buffer) => {
+    const b = new Uint8Array(buffer);
+    if (b.length < 13 || String.fromCharCode(...b.slice(0, 3)) !== 'GIF') return 3000;
+    let offset = 13;
+    const packed = b[10];
+    if (packed & 128) offset += 3 * (1 << ((packed & 7) + 1));
+    let delay = 10, total = 0, frames = 0;
+    const skipBlocks = () => {
+      while (offset < b.length) {
+        const len = b[offset++];
+        if (!len) break;
+        offset += len;
+      }
+    };
+    while (offset < b.length && frames < 10000) {
+      const id = b[offset++];
+      if (id === 0x3b) break;
+      if (id === 0x21) {
+        const kind = b[offset++];
+        if (kind === 0xf9 && b[offset] === 4) {
+          delay = b[offset + 2] | (b[offset + 3] << 8);
+        }
+        skipBlocks();
+      } else if (id === 0x2c) {
+        if (offset + 9 > b.length) break;
+        const localPacked = b[offset + 8];
+        offset += 9;
+        if (localPacked & 0x80) offset += 3 * (1 << ((localPacked & 7) + 1));
+        offset++; // LZW code size
+        skipBlocks();
+        total += Math.max(delay, 2) * 10;
+        frames++; delay = 10;
+      } else break;
+    }
+    return frames > 0 ? Math.max(total, 150) : 3000;
+  };
+
+  /* PAGE 08: 단디 (one GIF cycle) → 똑디 → 우디 → 단디 ... .
+     Non-active characters show the captured first frame as a static canvas.
+     When an image is activated a new Blob URL resets it to frame 1. */
+  const page08 = document.getElementById('page-08');
+  if (page08) {
+    const wrappers = Array.from(page08.querySelectorAll('.p08-fidelity-character'));
+    const entries = wrappers.map(wrapper => {
+      const img = wrapper.querySelector('img[data-sequence-gif]');
+      if (!img) return null;
+      const src = img.dataset.sequenceGif || img.getAttribute('src');
+      const canvas = document.createElement('canvas');
+      canvas.className = 'p08-gif-poster';
+      canvas.setAttribute('aria-hidden', 'true');
+      wrapper.insertBefore(canvas, img);
+      const entry = { wrapper, img, canvas, src, blob: null, ms: Number(img.dataset.expectedGifMs) || 3000, liveUrl: null };
+      fetch(src).then(r => { if (!r.ok) throw new Error(String(r.status)); return r.blob(); })
+        .then(async blob => {
+          entry.blob = blob;
+          entry.ms = gifMs(await blob.arrayBuffer());
+        }).catch(() => { /* file:// browsing can disallow fetch; use nominal fallback. */ });
+      const frame = () => {
+        try {
+          if (!img.naturalWidth) return;
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          canvas.getContext('2d')?.drawImage(img, 0, 0);
+        } catch (_) { canvas.style.display = 'none'; }
+      };
+      if (img.complete && img.naturalWidth) frame();
+      else img.addEventListener('load', frame, { once: true });
+      return entry;
+    }).filter(Boolean);
+    let current = -1, timer = null, showing = false;
+    const hide = e => {
+      e.wrapper.classList.remove('is-gif-active');
+      e.img.style.visibility = 'hidden';
+      if (e.liveUrl) {
+        const old = e.liveUrl;
+        e.liveUrl = null;
+        e.img.removeAttribute('src');
+        URL.revokeObjectURL(old);
+      }
+    };
+    const show = index => {
+      if (!showing || !entries.length) return;
+      entries.forEach(hide);
+      const e = entries[index];
+      current = index;
+      e.wrapper.classList.add('is-gif-active');
+      e.img.style.visibility = 'visible';
+      if (e.blob) {
+        e.liveUrl = URL.createObjectURL(e.blob);
+        e.img.src = e.liveUrl;
+      } else {
+        // Creating a new URL resets the animation even when the image is cached.
+        e.img.src = e.src + (e.src.includes('?') ? '&' : '?') + 'replay=' + Date.now();
+      }
+      timer = setTimeout(() => show((index + 1) % entries.length), Math.max(150, e.ms));
+    };
+    watchSection(page08, visible => {
+      if (visible && !showing) { showing = true; show(0); }
+      else if (!visible && showing) {
+        showing = false; clearTimeout(timer);
+        entries.forEach(hide);
+      }
+    });
+  }
+
+  /* PAGE 20: own visibility class, no competing work-page observer timeline. */
+  const page20 = document.getElementById('page-20');
+  watchSection(page20, visible => {
+    if (!page20) return;
+    page20.classList.toggle('is-wipe-playing', visible);
   });
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(([entry]) => update(entry.isIntersecting), { threshold: 0.1 });
-    observer.observe(section);
-  } else update(true);
-  reducedMotion.addEventListener?.('change', () => {
-    const rect = section.getBoundingClientRect();
-    update(rect.bottom > 0 && rect.top < window.innerHeight);
+
+  /* Background video or GIF; poster (existing Figma image) remains until loading.
+     Prefer MP4, then WebM, then GIF.  A GIF is an image, not a <video>. */
+  document.querySelectorAll('.portfolio-media-slot').forEach(slot => {
+    const base = slot.dataset.mediaBase;
+    if (!base) return;
+    const section = slot.closest('.portfolio-page');
+    const video = document.createElement('video');
+    video.setAttribute('playsinline', '');
+    video.muted = true;
+    video.autoplay = false;
+    video.loop = true;
+    video.preload = 'metadata';
+    let failedSources = 0;
+    for (const [ext,type] of [['mp4','video/mp4'],['webm','video/webm']]) {
+      const source = document.createElement('source');
+      source.src = base + '.' + ext;
+      source.type = type;
+      source.addEventListener('error', () => {
+        failedSources++;
+        if (failedSources >= 2) gifFallback();
+      });
+      video.appendChild(source);
+    }
+    slot.appendChild(video);
+    let ready = false, useGif = false, visible = false;
+    const playOrPause = () => {
+      if (useGif) return;
+      // Playing starts media download even when preload=metadata did not fetch frames.
+      if (visible) playSafe(video);
+      else video.pause();
+    };
+    const gifFallback = () => {
+      if (ready) return;
+      useGif = true;
+      video.pause();video.remove();
+      const img = document.createElement('img');
+      img.alt = '';
+      img.src = base + '.gif';
+      img.addEventListener('load', () => { ready = true; slot.classList.add('is-media-ready'); });
+      img.addEventListener('error', () => { slot.classList.remove('is-media-ready'); section?.setAttribute('data-media-unavailable','true'); });
+      slot.appendChild(img);
+    };
+    video.addEventListener('loadeddata', () => {
+      ready = true; slot.classList.add('is-media-ready');
+      section?.removeAttribute('data-media-unavailable');
+      playOrPause();
+    });
+    video.addEventListener('error', gifFallback, { once: true });
+    // A timeout also covers some browsers that only raise <source> error.
+    video.addEventListener('stalled', () => { if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) gifFallback(); });
+    watchSection(section, on => { visible = on; playOrPause(); });
+    video.load();
   });
+
+  /* PAGE 50: use the new GIF exported under media, while retaining its PNG backup. */
+  const model = document.querySelector('#page-50 img[data-animated-base]');
+  if (model) {
+    const still = model.dataset.staticSrc;
+    model.addEventListener('error', () => {
+      if (!model.dataset.didStaticFallback && still) {
+        model.dataset.didStaticFallback = '1'; model.classList.remove('is-missing'); model.src = still;
+      }
+    });
+    if (model.complete && !model.naturalWidth && still) {
+      model.dataset.didStaticFallback = '1'; model.src = still;
+    }
+  }
+
+  /* PAGE 55: Use the actual source image for the electric-blue glow when present. */
+  const f55 = document.querySelector('#page-55 .f55-source-glow');
+  if (f55) {
+    const stage = f55.closest('.page-55');
+    f55.addEventListener('load', () => stage?.classList.add('has-f55-source'));
+    f55.addEventListener('error', () => stage?.classList.remove('has-f55-source'));
+    if (f55.complete && f55.naturalWidth) stage?.classList.add('has-f55-source');
+  }
+
+  /* PAGE 51: each reel plays once, one after another. Browser requires a click
+     for audible autoplay, so video starts muted until the visitor enables 10%. */
+  const p51 = document.getElementById('page-51');
+  if (p51) {
+    const reels = Array.from(p51.querySelectorAll('video.p51-reel')).sort((a,b) => +a.dataset.reelIndex - +b.dataset.reelIndex);
+    const control = p51.querySelector('.p51-sound-control');
+    let visible = false, started = false, index = 0, audible = false, completed = false;
+    reels.forEach(video => {
+      video.loop = false;
+      video.autoplay = false;
+      video.muted = true;
+      video.volume = 0.1;
+      video.playsInline = true;
+    });
+    const step = () => {
+      if (!visible || completed || index >= reels.length) return;
+      const video = reels[index];
+      video.muted = !audible;
+      video.volume = .1;
+      playSafe(video);
+    };
+    reels.forEach((video,i) => {
+      video.addEventListener('ended', () => {
+        video.pause();
+        if (i !== index) return;
+        index++;
+        if (index >= reels.length) completed = true;
+        else if (visible) step();
+      });
+      video.addEventListener('error', () => {
+        // No never-ending wait on a missing first video.
+        if (i !== index) return;
+        index++;
+        if (index >= reels.length) completed = true;
+        else if (visible) step();
+      });
+    });
+    control?.addEventListener('click', () => {
+      audible = !audible;
+      control.textContent = audible ? '소리 끄기' : '소리 켜기 · 10%';
+      control.setAttribute('aria-pressed', String(audible));
+      reels.forEach(v => { v.muted = !audible; v.volume = .1; });
+      if (visible && !completed && index < reels.length) step();
+    });
+    watchSection(p51, on => {
+      visible = on;
+      if (!on) { reels.forEach(v => v.pause()); return; }
+      if (!started) { started = true; index = 0; completed = false; reels.forEach(v => {v.pause();v.currentTime=0;}); }
+      step();
+    });
+  }
 })();

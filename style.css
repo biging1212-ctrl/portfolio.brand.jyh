@@ -1551,3 +1551,70 @@ button:focus-visible, a:focus-visible {
   position:absolute;color:#fff;font:400 19.7px/1.3 "SUIT Variable","SUIT",var(--font-ko);
   letter-spacing:-.394px;white-space:nowrap;z-index:4;
 }
+
+
+/* ===== 2026-11-18 / requested Figma media and motion fixes ===== */
+/* Video fills: default background is transparent; the old Figma still remains visible
+   unless a video/GIF successfully loads. Geometry always follows the 1920px stage. */
+.portfolio-page .portfolio-media-slot{
+  position:absolute;left:0;top:0;width:1920px;height:1080px;
+  z-index:1;overflow:hidden;pointer-events:none;
+}
+.portfolio-page .portfolio-media-slot video,
+.portfolio-page .portfolio-media-slot img{
+  position:absolute;inset:0;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center;background:transparent;
+}
+.portfolio-page .portfolio-media-slot video{opacity:0;}
+.portfolio-page .portfolio-media-slot.is-media-ready video,
+.portfolio-page .portfolio-media-slot.is-media-ready img{opacity:1;}
+.page-29 .orion-type-heading,.page-30 .orion-type-heading,
+.page-31 .orion-type-heading,.page-36 .new-description{z-index:5;position:absolute;}
+.page-38 .portfolio-media-slot,.page-44 .portfolio-media-slot,.page-49 .portfolio-media-slot{z-index:1;}
+.page-44 .p44-space-caption{z-index:3;}
+/* page-08: three figures stay visible as still first frames, with only the active
+   one animated; exact GIF timing is parsed from its Graphic Control Extensions. */
+.page-08 .p08-fidelity-character{isolation:isolate;}
+.page-08 .p08-fidelity-character .p08-gif-poster{
+  position:absolute;inset:0;display:block;width:100%;height:100%;
+  object-fit:contain;z-index:1;pointer-events:none;
+}
+.page-08 .p08-fidelity-character img[data-sequence-gif]{position:relative;z-index:2;}
+.page-08 .p08-fidelity-character:not(.is-gif-active) img[data-sequence-gif]{visibility:hidden;}
+.page-08 .p08-fidelity-character.is-gif-active img[data-sequence-gif]{visibility:visible;}
+/* page20: stop conflicting .is-in-view observers from holding the wipe on frame 1.
+   The dedicated observer toggles only .is-wipe-playing. */
+.page-20 .lot-message-2,.page-20 .lot-message-3{animation:none!important;}
+.page-20.is-wipe-playing .lot-message-2{animation:lot-wipe-2 6s linear infinite!important;}
+.page-20.is-wipe-playing .lot-message-3{animation:lot-wipe-3 6s linear infinite!important;}
+.page-20 .lot-message img{object-fit:fill!important;}
+/* page28: fill rectangle for the source image, not a manually recreated 650 square. */
+.page-28 .orion-halo{left:200px;top:294px;width:1597px;height:706px;filter:blur(97.84px);}
+.page-28 .orion-handphone{left:725px;top:333px;width:623px;height:747px;}
+.page-28 .orion-stamp{border:2px solid #ed0018;background:rgba(255,255,255,.88);font:600 32.31px/1.25 var(--font-ko);text-transform:uppercase;padding:12px 27px;}
+/* page50: maintain exactly two Figma text lines without browser-induced wrapping.
+   A horizontally compressed text layer has the original 704px visual slot. */
+.page-50 .p50-character-description{
+  top:316px;left:1038px;width:875px;transform:scaleX(.80457);
+  transform-origin:top left;white-space:nowrap;letter-spacing:-.64px;
+  font:400 16px/1.7 var(--font-ko);z-index:4;
+}
+.page-50 .p50-skill-row{top:394px;left:1017px;width:729px;z-index:4;}
+.page-50 .p50-skill-row span{height:45px;display:flex;align-items:center;justify-content:center;padding:5px 14px;font-size:20px;line-height:1.2;}
+.page-50 .p50-items-title{top:562px;left:1016px;}
+.page-50 .p50-hero img{object-fit:contain!important;}
+/* Page51: retain Figma composition; clickable control is compact and off the artwork. */
+.page-51 .p51-sound-control{
+  position:absolute;top:985px;right:170px;z-index:12;
+  font:500 16px/1.2 var(--font-ko);color:#432c64;
+  background:rgba(255,255,255,.88);border:1px solid #8b6dad;
+  border-radius:24px;padding:11px 18px;cursor:pointer;
+}
+.page-51 .p51-sound-control:hover{background:#fff;}
+.page-51 .p51-sound-control:focus-visible{outline:3px solid #8b6dad;outline-offset:2px;}
+/* page55: original Figma glow image under the three CSS glass circles. */
+.page-55 .f55-source-glow{position:absolute;left:632px;top:237px;width:655px;height:655px;object-fit:fill;z-index:0;pointer-events:none;}
+.page-55.has-f55-source .f55-glow{opacity:0;}
+/* page58: Figma image fills use FILL, not CONTAIN. */
+.page-58 .f58-base,.page-58 .f58-previous-logo,
+.page-58 .f58-new-logo,.page-58 .f58-3d-logo{object-fit:cover!important;object-position:center!important;}
