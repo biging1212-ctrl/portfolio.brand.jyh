@@ -1002,3 +1002,78 @@ button:focus-visible, a:focus-visible {
 @keyframes p82-2{0%,49.979%{opacity:1}50.079%,100%{opacity:0}}
 @keyframes p82-3{0%,74.973%{opacity:1}75.073%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.portfolio-extension *{animation:none!important;transition:none!important;}}
+
+
+/* ==============================================================
+   Figma verified: Project 01 frames 04,06,09,10,12,13,14,15,16
+   Source canvas: 1920 x 1080; all coordinates below are design px.
+   User-exported PNG files are expected in assets/project01/image/.
+   ============================================================== */
+/* 04 — use Figma's exact image-filled logo and align metadata columns. */
+.page-04 .p04-logo {
+  position:absolute;left:953px;top:596px;width:967px!important;height:483.5px!important;
+  object-fit:cover!important;max-width:none;z-index:1;
+}
+.page-04 .p04-header {
+  display:block;position:absolute;left:100px;top:100px;width:1720px;height:75px;
+}
+.page-04 .work-project-title {position:absolute;left:0;top:0;gap:0;}
+.page-04 .work-project-title span {line-height:14px;}
+.page-04 .work-project-title b {position:relative;top:19px;line-height:18px;}
+.page-04 .p04-meta {position:absolute;top:0;gap:0;}
+.page-04 .p04-meta:nth-child(2) {left:1088px;}
+.page-04 .p04-meta:nth-child(3) {left:1305px;}
+.page-04 .p04-meta:nth-child(4) {left:1523px;}
+.page-04 .p04-meta strong {line-height:13px;}
+.page-04 .p04-meta span {position:relative;top:20px;line-height:1.2;}
+.page-04 .p04-award {right:99.5px;}
+
+/* 06 — one composite main illustration; 8 precisely located image fills. */
+.page-06 .p06-main-outline > .p06-main-composite {width:466px!important;height:466px!important;object-fit:cover!important;}
+.page-06 .p06-icon > span {position:absolute;display:block;margin-top:0;white-space:nowrap;}
+.page-06 .p06-icon:nth-child(1) > span {left:45px;top:193px;}
+.page-06 .p06-icon:nth-child(2) > span {left:24px;top:193px;}
+.page-06 .p06-icon:nth-child(3) > span {left:42px;top:193px;}
+.page-06 .p06-icon:nth-child(4) > span {left:38px;top:193px;}
+.page-06 .p06-icon:nth-child(5) > span {left:39px;top:142px;}
+.page-06 .p06-icon:nth-child(6) > span {left:3px;top:182px;}
+.page-06 .p06-icon:nth-child(7) > span {left:27px;top:160px;}
+.page-06 .p06-icon:nth-child(8) > span {left:24px;top:177px;}
+
+/* 09 — source's CHARACTER tag begins at Y=100, not Y=188. */
+.page-09 .p09-badge-1 {top:100px;}
+
+/* 12 — source screenshot contains ONE composite image of 3 phones. */
+.page-12 .p12-glow {left:168px;top:-17px;width:2117px;height:1423px;}
+.page-12 .p12-composite {
+  position:absolute;left:431px;top:157px;width:1489px!important;height:923px!important;
+  object-fit:cover!important;max-width:none;
+}
+
+/* 13 — screenshot source x=200,586,972,1358; image slots x=223,609,1026,1381. */
+.page-13 .p13-card {padding:0;}
+.page-13 .p13-card-chip {
+  position:absolute;top:13px;left:50%;transform:translateX(-50%);
+  margin:0;height:36px;display:flex;align-items:center;justify-content:center;
+}
+.page-13 .p13-card-subtitle {position:absolute;top:84px;left:0;width:100%;margin:0;}
+.page-13 .p13-card-img {position:absolute;left:23px;top:120px;width:316px;height:316px;margin:0;}
+.page-13 .p13-card:nth-of-type(3) .p13-card-img {left:54px;width:253px;}
+.page-13 .p13-card-list {position:absolute;left:48px;top:474px;margin:0;}
+.page-13 .p13-card:nth-of-type(3) .p13-card-list {left:53px;}
+.page-13 .p13-card:nth-of-type(4) .p13-card-list {left:44px;}
+
+/* 14 — source phone fill at (179,229), 585x851. */
+.page-14 .p14-phone {left:179px;top:229px;width:585px;height:851px;}
+.page-14 .p14-phone img {object-fit:cover!important;}
+
+/* 15 — exact source composite phone, screen2, description positions. */
+.page-15 .p15-app-mockup {left:753px;top:173px;width:413.5px;height:798px;}
+.page-15 .p15-leftmid {left:313.5px;}
+.page-15 .p15-description {left:1229px;}
+
+/* 16 — each exported Figma cropped layer is already its own finished bitmap. */
+.page-16 .p16-board img {
+  display:block;width:100%!important;height:100%!important;max-width:100%!important;
+  object-fit:cover!important;transform:none!important;
+}
