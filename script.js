@@ -185,3 +185,44 @@
     }
   });
 })();
+
+/* PAGE 14: single-image carousel, preserving Figma's 580x580 fixed photo slot. */
+(() => {
+  const page = document.getElementById('page-14');
+  if (!page) return;
+  const cards = Array.from(page.querySelectorAll('.p14-social-card')).reverse(); // 1 -> 8
+  if (!cards.length) return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let activeIndex = 0;
+  let intervalId = null;
+  function show(index) {
+    activeIndex = (index + cards.length) % cards.length;
+    cards.forEach((card, i) => {
+      const active = i === activeIndex;
+      card.classList.toggle('is-active', active);
+      card.setAttribute('aria-hidden', String(!active));
+    });
+  }
+  function stop() {
+    if (intervalId !== null) window.clearInterval(intervalId);
+    intervalId = null;
+  }
+  function syncPlayback() {
+    stop();
+    if (reducedMotion.matches || !page.classList.contains('is-in-view') || document.hidden) return;
+    intervalId = window.setInterval(() => show(activeIndex + 1), 1500);
+  }
+  show(0);
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      page.classList.toggle('is-in-view', entry.isIntersecting);
+      syncPlayback();
+    }, { threshold: .12 });
+    observer.observe(page);
+  } else {
+    page.classList.add('is-in-view');
+    syncPlayback();
+  }
+  document.addEventListener('visibilitychange', syncPlayback);
+  reducedMotion.addEventListener?.('change', syncPlayback);
+})();

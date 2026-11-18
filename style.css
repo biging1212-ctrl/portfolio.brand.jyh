@@ -455,7 +455,7 @@ button:focus-visible, a:focus-visible {
 .page-10 .stage{background:#fefefe;}
 .p10-gallery{position:absolute;left:212px;top:219px;width:1494px;height:644px;}
 .p10-slide{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,363px);grid-template-rows:repeat(3,204px);gap:16px 14px;}
-.p10-tile{overflow:hidden;background:#fff;}
+.p10-tile{position:relative;overflow:hidden;background:#fff;box-shadow:1px 2px 4px rgba(0,0,0,.25);} 
 .p10-tile>img{object-fit:cover;}
 .p10-slide-1{opacity:1;animation:p10-first 6s linear infinite;}
 .p10-slide-2{opacity:0;animation:p10-second 6s linear infinite;}
@@ -475,54 +475,69 @@ button:focus-visible, a:focus-visible {
 .p12-phone-screen{position:absolute;left:15px;top:24px;width:480px!important;height:982px!important;object-fit:cover!important;border-radius:55px;}
 .p12-phone-frame{position:absolute;inset:0;object-fit:contain!important;}
 
-/* 13 — channel contents design guideline */
+/* 13 — channel-content guideline: align all parts to the Figma 1920×1080 coordinates. */
 .page-13 .stage{background:#f8fffe;}
-.p13-guideline{position:absolute;left:200px;top:125px;width:1519px;height:169px;display:flex;border-radius:30px;background:#d1efe0;overflow:hidden;font-family:var(--font-ko);}
-.p13-guideline>div{flex:none;width:242px;background:#59bbaa;display:flex;align-items:center;justify-content:center;text-align:center;font:650 20px/1.25 var(--font-latin);color:white;}
-.p13-guideline ul{list-style:none;margin:0;padding:35px 30px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px 20px;align-content:center;flex:1;font:400 16px/1.4 var(--font-ko);}
-.p13-guideline li:before{content:'✓';background:white;border-radius:50%;color:#59bbaa;display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;margin-right:9px;}
-.p13-card{position:absolute;top:368px;width:362px;height:588px;border-radius:30px;background:#fff;box-shadow:0 4px 6px rgba(0,0,0,.22);font-family:var(--font-ko);text-align:center;padding:0 24px;}
-.p13-card-chip{position:relative;display:inline-block;margin-top:23px;padding:7px 18px;border-radius:30px;background:#59bbaa;color:#fff;font:500 18px/1.25 var(--font-ko);}
+/* Top banner: x=200 y=125, mint panel 1519×169 and title block 242×169. */
+.p13-guideline{position:absolute;left:200px;top:125px;width:1519px;height:169px;border-radius:30px;background:#d1efe0;overflow:hidden;font-family:var(--font-ko);z-index:2;}
+.p13-guideline-heading{position:absolute;left:0;top:0;width:242px;height:169px;background:#59bbaa;display:flex;align-items:center;justify-content:center;text-align:center;color:white;font:600 20px/1.25 var(--font-ko);letter-spacing:-.6px;}
+.p13-guideline ul{list-style:none;margin:0;padding:0;position:absolute;inset:0;font:400 16px/1.35 var(--font-ko);letter-spacing:-.48px;}
+.p13-guideline li{position:absolute;display:flex;align-items:center;gap:9px;height:29px;white-space:nowrap;color:#111;}
+.p13-guideline li:nth-child(1){left:315px;top:40px;}
+.p13-guideline li:nth-child(2){left:610px;top:40px;}
+.p13-guideline li:nth-child(3){left:1019px;top:40px;}
+.p13-guideline li:nth-child(4){left:315px;top:100px;}
+.p13-guideline li:nth-child(5){left:610px;top:100px;}
+.p13-guideline li::before{content:'✓';flex:none;display:flex;align-items:center;justify-content:center;width:28.33px;height:28.33px;background:#fff;border-radius:50%;color:#59bbaa;font:600 17px/1 var(--font-ko);}
+/* Four 1px connector lines (original Figma x/y: 380/766/1152/1538, y=294). */
+.p13-connector{position:absolute;top:294px;width:1px;height:91px;background:#59bbaa;z-index:1;pointer-events:none;}
+.p13-connector-1{left:380px;}.p13-connector-2{left:766px;}.p13-connector-3{left:1152px;}.p13-connector-4{left:1538px;background:#ffb20f;}
+.p13-card{position:absolute;top:368px;width:361.75px;height:588px;border-radius:30px;background:#fff;box-shadow:0 4px 6px rgba(0,0,0,.25);font-family:var(--font-ko);text-align:center;padding:0;z-index:2;}
+/* Chip: top=381, h=36; widths follow original Figma instances. */
+.p13-card-chip{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:165px;height:36px;padding:0;border-radius:30px;background:#59bbaa;color:#fff;font:500 18px/36px var(--font-ko);letter-spacing:-.72px;white-space:nowrap;text-align:center;}
+.p13-card:nth-of-type(3) .p13-card-chip{width:199px;}
+.p13-card:nth-of-type(4) .p13-card-chip{width:182px;}
 .p13-card-chip.orange{background:#ffb20f;}
-.p13-card-subtitle{font:500 18px/1.3 var(--font-ko);margin-top:20px;white-space:nowrap;}
-.p13-card-img{width:316px;height:316px;position:relative;margin:24px auto 0;overflow:hidden;}
-.p13-card-img img{object-fit:cover;}
-.p13-card-list{text-align:left;margin-top:17px;}
-.p13-card-list p{font:400 15px/1.45 var(--font-ko);white-space:nowrap;margin:5px 0;letter-spacing:-.4px;}
-.p13-card-list i{font-style:normal;color:#00a878;margin-right:10px;font-weight:700;}
+/* Subheadings all start at page y=452; no margin-driven vertical drift. */
+.p13-card-subtitle{position:absolute;top:84px;left:0;width:100%;height:24px;margin:0;font:500 18px/24px var(--font-ko);letter-spacing:-.72px;white-space:nowrap;text-align:center;}
+/* Raster slots begin at page y=488. Third is a portrait aspect ratio. */
+.p13-card-img{position:absolute;top:120px;left:23px;width:316px;height:316px;margin:0;overflow:hidden;}
+.p13-card-img img{width:100%;height:100%;object-fit:fill!important;}
+.p13-card:nth-of-type(3) .p13-card-img{left:54px;width:252.9px;height:316.125px;}
+.p13-card-list{position:absolute;top:474px;left:48px;width:285px;text-align:left;margin:0;}
+.p13-card:nth-of-type(3) .p13-card-list{left:53px;}
+.p13-card:nth-of-type(4) .p13-card-list{left:44px;}
+.p13-card-list p{display:flex;align-items:baseline;gap:10px;margin:0 0 8px;font:400 16px/21px var(--font-ko);letter-spacing:-.64px;white-space:nowrap;}
+.p13-card-list i{font-style:normal;flex:none;color:#00a878;font-weight:700;margin:0;}
 
-/* 14 — SNS card motion: 8 original images, 12s Figma timeline. */
+/* 14 — SNS carousel: one completely opaque 580×580 card at the original position. */
 .page-14 .stage{background:linear-gradient(180deg,#f8fffe,#f9f9f9);}
 .p14-right-bg{position:absolute;right:0;top:0;width:982px;height:1080px;background:#d1efe0;}
-.p14-phone {position:absolute;left:223px;top:275px;width:488px;height:1054px;border-radius:47px;overflow:hidden;z-index:2;}
-.p14-phone img{width:100%;height:100%;object-fit:contain;}
-.p14-cards{position:absolute;top:255px;left:1139px;width:580px;height:580px;perspective:1100px;}
-.p14-social-card{position:absolute;inset:0;border-radius:30px;overflow:hidden;transform-origin:50% 50%;box-shadow:0 12px 20px rgba(0,0,0,.075);}
-.p14-social-card img{object-fit:cover;}
-.p14-card-8 {--i:0;}.p14-card-7{--i:1;}.p14-card-6{--i:2;}.p14-card-5{--i:3;}.p14-card-4{--i:4;}.p14-card-3{--i:5;}.p14-card-2{--i:6;}.p14-card-1{--i:7;}
-.p14-social-card{animation:p14-card 12s cubic-bezier(.16,1,.3,1) infinite;animation-delay:calc(var(--i) * -1.5s);}
-@keyframes p14-card{
-  0%{transform:translateY(-220px) scale(.61) rotate(-6deg);opacity:.35;}
-  7%,15%{transform:translateY(-90px) scale(.85) rotate(3deg);opacity:.85;}
-  20%,65%{transform:translateY(0) scale(1) rotate(0deg);opacity:1;}
-  72%{transform:translate(-30px,-24px) scale(1.045) rotate(-3deg);opacity:1;}
-  78%,90%{transform:translate(850px,48px) scale(.96) rotate(-20deg);opacity:0;}
-  100%{transform:translateY(-220px) scale(.61) rotate(-6deg);opacity:.35;}
-}
+/* Original Figma phone is x=179, y=229, w=585, h=851. */
+.p14-phone{position:absolute;left:179px;top:229px;width:585px;height:851px;overflow:hidden;z-index:2;}
+.p14-phone img{width:100%;height:100%;object-fit:fill!important;}
+.p14-cards{position:absolute;top:255px;left:1139px;width:580.4px;height:580.4px;}
+.p14-social-card{position:absolute;inset:0;border-radius:30px;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .28s ease-out,transform .28s ease-out;z-index:1;pointer-events:none;}
+.p14-social-card.is-active{opacity:1;visibility:visible;transform:translateY(0);z-index:2;}
+.p14-social-card img{display:block;width:100%;height:100%;object-fit:cover!important;}
 
-/* 15 — application mockups */
+/* 15 — application: solid mint circle + a separate bottom rectangular fade. */
 .page-15 .stage{background:#f9f9f9;}
-.p15-backdrop{position:absolute;width:1650px;height:1400px;border-radius:50%;left:150px;top:675px;background:radial-gradient(ellipse,#abefd1 0%,#d8fff1 42%,transparent 67%);}
-.p15-label{position:absolute;left:100px;top:100px;font:650 20px/1.25 var(--font-ko);letter-spacing:-.4px;}
-.p15-app-mockup{position:absolute;left:750px;top:110px;width:413px;height:800px;filter:drop-shadow(4px 10px 8px rgba(0,0,0,.18));}
-.p15-app-mockup img{object-fit:contain;}
-.p15-image{position:absolute;border-radius:20px;overflow:hidden;}
-.p15-image img{object-fit:cover;}
-.p15-left{left:1px;top:454px;width:280px;height:566px;}
-.p15-leftmid{left:270px;top:454px;width:363px;height:566px;box-shadow:0 3px 7px rgba(0,0,0,.15);}
-.p15-rightmid{left:1226px;top:257px;width:215px;height:256px;}
-.p15-right{left:1463px;top:257px;width:672px;height:256px;}
-.p15-description{position:absolute;left:1260px;top:561px;color:#3e3e3e;font:400 16px/1.7 var(--font-ko);letter-spacing:-.64px;}
+/* Original Figma: Ellipse 1918, x=125, y=675, w=1674, h=1376. */
+.p15-backdrop{position:absolute;left:125px;top:675px;width:1674px;height:1376px;border-radius:50%;background:#baf3d5;pointer-events:none;z-index:0;}
+/* Original Figma: Rectangle 161124266, x=0, y=826, w=1920, h=254. */
+.p15-gradient-overlay{position:absolute;left:0;top:826px;width:1920px;height:254px;background:linear-gradient(to bottom,rgba(249,249,249,0),#f9f9f9);pointer-events:none;z-index:1;}
+.p15-label{position:absolute;left:100px;top:100px;font:650 20px/1.25 var(--font-ko);letter-spacing:-.4px;z-index:3;}
+/* Figma's phone image is not positioned at the previous 750,110 coordinates. */
+.p15-app-mockup{position:absolute;left:753px;top:173px;width:413.5px;height:798px;z-index:3;}
+.p15-app-mockup img{width:100%;height:100%;object-fit:fill!important;}
+.p15-gallery{position:static;}
+.p15-image{position:absolute;border-radius:20px;overflow:hidden;z-index:3;}
+.p15-image img{width:100%;height:100%;object-fit:cover!important;}
+.p15-left{left:1px;top:454px;width:280px;height:566px;box-shadow:0 3.62px 9.66px rgba(0,0,0,.15);}
+.p15-leftmid{left:313.5px;top:454px;width:363.03px;height:566.3px;box-shadow:0 2.69px 7.16px rgba(0,0,0,.15);}
+.p15-rightmid{left:1226px;top:257px;width:215px;height:256px;box-shadow:0 3.62px 9.66px rgba(0,0,0,.15);}
+.p15-right{left:1463px;top:257px;width:672.77px;height:256px;box-shadow:0 3.62px 9.66px rgba(0,0,0,.15);}
+.p15-description{position:absolute;left:1229px;top:561px;width:490px;color:#3e3e3e;font:400 16px/1.7 var(--font-ko);letter-spacing:-.64px;z-index:3;}
 
 /* 16 — four print/goods mockups with the Figma crop geometry. */
 .page-16 .stage{background:#f9f9f9;}
@@ -541,14 +556,15 @@ button:focus-visible, a:focus-visible {
 @media(prefers-reduced-motion:reduce){
   .page-05 .p05-ticker,.page-10 .p10-slide,.page-14 .p14-social-card{animation:none!important;}
   .page-10 .p10-slide-2{opacity:0;}
-  .page-14 .p14-social-card{opacity:0;}
-  .page-14 .p14-card-8{opacity:1;transform:none;}
+  .page-14 .p14-social-card{transition:none!important;}
+  .page-14 .p14-social-card:not(.is-active){opacity:0;visibility:hidden;}
+  .page-14 .p14-social-card.is-active{opacity:1;visibility:visible;transform:none;}
 }
 
 /* Real source assets are fetched by the supplied Windows asset downloader. */
 .work-page[data-missing-assets="true"]::after{content:"Figma 원본 이미지 미설치 · download-assets.bat 실행 필요";position:absolute;bottom:24px;right:24px;background:rgba(0,0,0,.82);color:#fff;font:500 12px/1.4 var(--font-ko);padding:9px 14px;border-radius:6px;pointer-events:none;z-index:20;}
-.work-page .p05-ticker,.work-page .p10-slide,.work-page .p14-social-card{animation-play-state:paused;}
-.work-page.is-in-view .p05-ticker,.work-page.is-in-view .p10-slide,.work-page.is-in-view .p14-social-card{animation-play-state:running;}
+.work-page .p05-ticker,.work-page .p10-slide{animation-play-state:paused;}
+.work-page.is-in-view .p05-ticker,.work-page.is-in-view .p10-slide{animation-play-state:running;}
 @media(max-width:850px){.work-page[data-missing-assets="true"]::after{left:12px;right:12px;bottom:6px;text-align:center;font-size:9px;padding:5px;}}
 /* Preserve Figma's decorative SVG clip and ring assets when installed. */
 .p04-symbols .p04-arch {-webkit-mask-image:url('./assets/project01/image/p04-imgGroup.svg');mask-image:url('./assets/project01/image/p04-imgGroup.svg');-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
