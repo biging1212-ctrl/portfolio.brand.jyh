@@ -1093,3 +1093,95 @@ button:focus-visible, a:focus-visible {
   display:block;width:100%!important;height:100%!important;max-width:100%!important;
   object-fit:cover!important;transform:none!important;
 }
+
+
+/* ===== targeted fixes: page-08 / page-13 / page-14 ===== */
+
+/* PAGE 08 — Figma frame 3537:1085: GIF characters and name/chip coordinates. */
+.page-08 .p08-character {
+  top:0; width:400px; height:915px; text-align:center;
+}
+.page-08 .p08-character.blue {left:284px!important;}
+.page-08 .p08-character.cyan {left:760px!important;}
+.page-08 .p08-character.green {left:1221px!important; width:436px;}
+.page-08 .p08-character > .character-figure {
+  position:absolute; left:0; top:314px; width:400px!important; height:400px!important;
+  display:block; object-fit:contain!important; max-width:none;
+}
+.page-08 .p08-character.green > .character-figure {top:296px;width:436px!important;height:436px!important;}
+.page-08 .p08-character h3 {
+  position:absolute;left:0;top:724px;width:100%;height:37px;margin:0;
+  font:700 43px/37px 'Grandstander',var(--font-latin);
+  letter-spacing:-1px;white-space:nowrap;
+}
+.page-08 .p08-chips {
+  position:absolute;top:801px;left:0;width:100%;margin:0;
+  gap:10px;align-items:center;font:400 16px/1.2 var(--font-ko);
+}
+.page-08 .p08-chips-solid,.page-08 .p08-chips-outline {gap:9px;justify-content:center;align-items:center;}
+.page-08 .p08-chips span {
+  height:40px;display:inline-flex;align-items:center;justify-content:center;
+  padding:0 13px; border-radius:50px; white-space:nowrap;
+}
+.page-08 .p08-chips-solid span:first-child {min-width:140px;}
+.page-08 .p08-chips-solid span:nth-child(2) {min-width:122px;}
+.page-08 .p08-character.cyan .p08-chips-solid span:nth-child(2) {min-width:139px;}
+.page-08 .p08-chips-outline span:nth-child(1),
+.page-08 .p08-chips-outline span:nth-child(2) {min-width:91px;}
+.page-08 .p08-chips-outline span:nth-child(3) {min-width:104px;}
+.page-08 .p08-watermark {left:270px;top:499px;width:1381px;height:121px;font-size:135px;line-height:121px;overflow:hidden;opacity:.085;}
+
+/* PAGE 13 — connector lines are foreground, not buried by the four white cards. */
+.page-13 .p13-connector {
+  z-index:6;
+  top:294px;
+  height:87px; /* Ends exactly at the pill top (y=381), never crossing its text. */
+  width:1px;
+  pointer-events:none;
+}
+.page-13 .p13-guideline {z-index:2;}
+.page-13 .p13-card {z-index:3;}
+
+/* PAGE 14 — restore original staged 12-second 3D-card movement (8 × 1.5s).
+   Figma presents the images as an overlapping stack; the old single-photo
+   opacity carousel removed the movement. Cards are opaque whenever visible. */
+.page-14 .p14-cards {perspective:1100px;overflow:visible;}
+.page-14 .p14-social-card {
+  visibility:visible; opacity:1; transform:none;
+  position:absolute; inset:0;
+  overflow:hidden; border-radius:30px;
+  pointer-events:none; box-shadow:0 12px 20px rgba(0,0,0,.075);
+  transform-origin:50% 50%;
+  backface-visibility:hidden;
+  transition:none;
+  animation:p14-restored-stack 12s ease-in-out infinite both;
+  animation-delay:calc(var(--p14-order) * 1.5s - 12s);
+  will-change:transform,opacity;
+}
+.page-14 .p14-social-card.is-active {opacity:1;visibility:visible;transform:none;}
+/* Start the 12-second timeline at scroll-entry, not at initial document load. */
+.page-14:not(.is-in-view) .p14-social-card {animation:none;opacity:0;visibility:hidden;transform:none;}
+.page-14:not(.is-in-view) .p14-card-1 {opacity:1;visibility:visible;z-index:8;}
+.page-14 .p14-card-1 {--p14-order:0;}
+.page-14 .p14-card-2 {--p14-order:1;}
+.page-14 .p14-card-3 {--p14-order:2;}
+.page-14 .p14-card-4 {--p14-order:3;}
+.page-14 .p14-card-5 {--p14-order:4;}
+.page-14 .p14-card-6 {--p14-order:5;}
+.page-14 .p14-card-7 {--p14-order:6;}
+.page-14 .p14-card-8 {--p14-order:7;}
+/* One large foreground image + two receding upper-left cards.
+   Each image exits the foreground before the next one arrives. */
+@keyframes p14-restored-stack {
+  0%, 9% {transform:translate(0,0) scale(1) rotate(0deg);opacity:1;z-index:8;}
+  12.5% {transform:translate(690px,30px) scale(.93) rotate(12deg);opacity:0;z-index:8;}
+  15%, 60% {transform:translate(-110px,-245px) scale(.64) rotate(-10deg);opacity:0;z-index:0;}
+  62.5% {transform:translate(-96px,-210px) scale(.69) rotate(-9deg);opacity:1;z-index:1;}
+  75% {transform:translate(-74px,-158px) scale(.78) rotate(-6deg);opacity:1;z-index:2;}
+  87.5% {transform:translate(-45px,-99px) scale(.87) rotate(-3deg);opacity:1;z-index:3;}
+  98%, 100% {transform:translate(0,0) scale(1) rotate(0deg);opacity:1;z-index:7;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .page-14 .p14-social-card {animation:none!important;opacity:0!important;visibility:hidden!important;transform:none!important;}
+  .page-14 .p14-card-1 {opacity:1!important;visibility:visible!important;z-index:2;}
+}
