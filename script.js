@@ -574,3 +574,8 @@
   }
   page.dataset.wipeEngine = 'web-animations-6s-loop';
 })();
+
+// 포트폴리오 전체 마우스 오른쪽 클릭 차단
+document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+});
